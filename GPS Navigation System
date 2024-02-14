@@ -1,0 +1,45 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+class GPSNavigationSystem:
+    def __init__(self):
+        self.graph = nx.Graph()
+
+    def add_location(self, location, coordinates):
+        self.graph.add_node(location, pos=coordinates)
+
+    def add_road(self, source, destination, distance):
+        self.graph.add_edge(source, destination, weight=distance)
+
+    def plot_map(self):
+        pos = nx.get_node_attributes(self.graph, 'pos')
+        nx.draw(self.graph, pos, with_labels=True, node_size=700, node_color='skyblue', font_size=8, font_color='black')
+        labels = nx.get_edge_attributes(self.graph, 'weight')
+        nx.draw_networkx_edge_labels(self.graph, pos, edge_labels=labels)
+        plt.show()
+
+    def find_shortest_path(self, source, destination):
+        try:
+            path = nx.shortest_path(self.graph, source=source, target=destination, weight='weight')
+            distance = nx.shortest_path_length(self.graph, source=source, target=destination, weight='weight')
+            print(f"Shortest path from {source} to {destination}: {path}")
+            print(f"Total distance: {distance}")
+        except nx.NetworkXNoPath:
+            print(f"No path found from {source} to {destination}.")
+
+# Example usage
+gps_system = GPSNavigationSystem()
+
+gps_system.add_location("A", (0, 0))
+gps_system.add_location("B", (1, 1))
+gps_system.add_location("C", (2, 0))
+gps_system.add_location("D", (3, 1))
+
+gps_system.add_road("A", "B", 1)
+gps_system.add_road("B", "C", 2)
+gps_system.add_road("C", "D", 1)
+gps_system.add_road("A", "D", 3)
+
+gps_system.plot_map()
+
+gps_system.find_shortest_path("A", "D")
